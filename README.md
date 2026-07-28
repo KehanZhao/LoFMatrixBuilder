@@ -33,19 +33,16 @@ BiocManager::install("VariantAnnotation")
 
 2. **Biallelic sites only** — multiallelic sites should be split before running. The script will warn you if it detects any.
 
-The script works with both phased and unphased VCFs. If you intend to phase your VCF, it is recommended to do so **before** splitting multiallelic sites, as phasing tools generally expect the original multiallelic representation. Split multiallelic sites after phasing.
+The script works with both phased and unphased VCFs. If you intend to phase your VCF, it is recommended in the following order:
+
+1. Split multiallelic sites first — bcftools norm -m -any (needs -f ref.fa for proper realignment)
+2. Phase with BEAGLE on the split, biallelic-only VCF
+3. Split again after phasing — BEAGLE can re-merge some sites into multiallelic records during phasing, another bcftools norm -m -any pass afterward as cleanup is needed
+4. Annotate with snpEff last, on the fully split VCF
 
 ```bash
 # Annotate with SnpEff
 java -jar snpEff.jar <genome> input.vcf.gz > annotated.vcf.gz
-
-# Split multiallelic sites
-bcftools norm -m -any annotated.vcf.gz \
-    | bcftools norm -f reference.fa \
-    -O z -o input_biallelic.vcf.gz
-
-# Index
-bcftools index -t input_biallelic.vcf.gz
 ```
 
 ---
