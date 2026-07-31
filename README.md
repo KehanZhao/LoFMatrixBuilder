@@ -37,7 +37,7 @@ The script works with both phased and unphased VCFs. If you intend to phase your
 
 1. Split multiallelic sites first — bcftools norm -m -any (needs -f ref.fa for proper realignment)
 2. Phase with BEAGLE on the split, biallelic-only VCF
-3. Annotate with snpEff last, on the fully split VCF
+3. Annotate with snpEff last, on the fully split phased VCF
 
 ---
 
